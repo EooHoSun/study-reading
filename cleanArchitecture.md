@@ -61,3 +61,105 @@
 
 1번과 같은 선언된 변수는 동시성 어플리케이션에서 다수의 스레드와 프로세스 환경에서 경합조건, 교착상태 조건, 동시업데이트 등과 같은 문제를 발생시킬 수 있다. 반면 2번과 같은 형식은 프로그램은 이러한 가변 변수로 인한 문제의 원인을 해소할 수 있다.
 
+
+
+## 3장
+>좋은 아키텍처를 구현하기 위해 필수적인 원칙5가지(SOLID)
+    1. 단일책임의 원칙 (Single Responsibility Principle) SAP
+    2. 개방-폐쇄의 원칙 (Open-Closed Principle)  OCP
+    3. 리스코프 치환 원칙 (Liskov Substitution Principle) LSP
+    4. 인터페이스 분리 원칙 (Interface Segregation Principle) ISP
+    5. 의존성 역전 원칙 (Dependency Inversion Principle) DIP
+
+
+
+#### 단일책임의 원칙 (Single Responsibility Principle) SAP
+>하나의 모듈(함수와 데이터의 응집단위)은 하나의 액터(이해관계자/집단)에 대해서만 책임져야 한다.
+
+```java
+
+/*===========================
+============1================
+=============================*/
+class Employee{
+    //회계팀이 사용하는 method
+    public void calcPay(){
+        /*logic*/
+    }
+    //인사팀이 사용하는 method
+    public void reportHours(){
+        /*logic*/
+    }
+    //DBA가 사용하는 method
+    public void save(){
+        /*logic*/
+    }
+}
+
+/*===========================
+============2================
+=============================*/
+class Caculator{
+    public void calcPay(){
+        /*logic*/
+    }
+}
+class Reporter{
+    public void reportHours(){
+        /*logic*/
+    }
+}
+class Saver{
+    public void save(){
+        /*logic*/
+    }   
+}
+
+
+/*================================
+============3 퍼사드패턴===========
+==================================*/
+class EmployeeFacade{
+    public Caculator caculator;
+    public Reporter reporter;
+    public Saver saver;
+
+    public void calcPay(){
+        this.caculator.calcPay();
+    }
+    public void reportHours(){
+        this.reporter.reportHours();
+    }
+    public void save(){
+        this.saver.save();
+    }
+}
+
+class Caculator{
+    public void calcPay(){
+        /*logic*/
+    }
+}
+class Reporter{
+    public void reportHours(){
+        /*logic*/
+    }
+}
+class Saver{
+    public void save(){
+        /*logic*/
+    }
+}
+
+```
+
+>위 코드에서 1번의 경우
+한 class에서 필요로 하는 method가 서로 다른 여러 이해관계자(인사팀, DBA, 회계팀)이 함께 소스를 CUD하면서 일어나는 병합, 중복의 문제가 발생할 수 있다. 이러한 문제를 해결하기위해 2번처럼 class를 나눌 수 있으나 이런 경우 개발자가 각각의 인스턴스를 매번 추적해야하는 불편함이 있다.
+따라서 3번(퍼사드 패턴)과 같은 방식으로 해결을 할 수 있다.
+이러한 해결법의 궁극적 목적은 **단일책임원칙의 충족**에 있다. 1번 소스에서 발생했던 병합, 중복의 문제를 피하기 위함이다.
+
+
+#### 개방-폐쇄의 원칙 (Open-Closed Principle)  OCP
+#### 리스코프 치환 원칙 (Liskov Substitution Principle) LSP
+#### 인터페이스 분리 원칙 (Interface Segregation Principle) ISP  
+#### 의존성 역전 원칙 (Dependency Inversion Principle) DIP
